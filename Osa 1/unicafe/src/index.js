@@ -8,9 +8,13 @@ const Button = ({set, text}) => (
 )
 
 const StatisticLine = ({text, value}) => (
-  <div>
-    <p>{text} {value}</p>
-  </div>
+  <tbody>
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
+  </tbody>
+  
 )
 
 const Statistics = ({good, bad, neutral}) => {
@@ -18,14 +22,14 @@ const Statistics = ({good, bad, neutral}) => {
 
   if (total > 0) {
     return (
-      <div>
+      <table>
         <StatisticLine text='good' value={good} />
         <StatisticLine text='neutral' value={neutral} />
         <StatisticLine text='bad' value={bad} />
         <StatisticLine text='all' value={total} />
         <StatisticLine text='average' value={(good-bad)/total} />
-        <StatisticLine text='positive' value={good/total*100} />
-      </div>
+        <StatisticLine text='positive' value={good/total*100 + '%'} /> 
+      </table>
     )
   }
   return (
