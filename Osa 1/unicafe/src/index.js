@@ -14,7 +14,6 @@ const StatisticLine = ({text, value}) => (
       <td>{value}</td>
     </tr>
   </tbody>
-  
 )
 
 const Statistics = ({good, bad, neutral}) => {
