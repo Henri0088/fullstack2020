@@ -7,7 +7,6 @@ const Button = ({set, text}) => (
   </button>
 )
 
-  
 const App = () => {
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
@@ -25,6 +24,9 @@ const App = () => {
       good {good} <br/>
       neutral {neutral} <br/>
       bad {bad} <br/>
+      all {good + neutral + bad} <br />
+      average {(good-bad)/(good+neutral+bad)} <br />
+      positive {good/(good+neutral+bad)*100}
     </div>
   )
 
