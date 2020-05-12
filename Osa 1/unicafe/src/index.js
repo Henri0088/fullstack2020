@@ -9,20 +9,25 @@ const Button = ({set, text}) => (
 
 const Statistics = ({good, bad, neutral}) => {
   const total = good+bad+neutral
+
+  if (total > 0) {
+    return (
+      <div>
+      <p>good {good}</p>
+      <p>neutral {neutral}</p>
+      <p>bad {bad}</p>
+      <p>all {good + neutral + bad}</p>
+      <p>average {(good-bad)/(total)}</p>
+      <p>positive {good/(total)*100}</p>
+    </div>
+    )
+  }
   return (
     <div>
-    <p>good {good}</p>
-    <p>neutral {neutral}</p>
-    <p>bad {bad}</p>
-    <p>all {good + neutral + bad}</p>
-    <p>average {(good-bad)/(total)}</p>
-    <p>positive {good/(total)*100}</p>
-  </div>
+      <p>No feedback given</p>
+    </div>
   )
 }
-  
-  
-
 
 const App = () => {
   const [good, setGood] = useState(0)
@@ -41,7 +46,6 @@ const App = () => {
       <Statistics good={good} bad={bad} neutral={neutral} />
     </div>
   )
-
 }
 
 ReactDOM.render(
