@@ -12,6 +12,7 @@ const Button = ({text, set}) => {
 const App = (props) => {
   const [selected, setSelected] = useState(0)
   const [votes, setVotes] = useState(new Array(6).fill(0))
+  const [popular, setPopular] = useState(0)
 
   const updateVotes = () => {
     const copy = [...votes]
@@ -19,16 +20,23 @@ const App = (props) => {
     setVotes(copy)
   }
 
+  if (Math.max(...votes) > votes[popular]) {
+    let larg = Math.max(...votes)
+    setPopular(votes.indexOf(larg))
+  }
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <div>
         {props.anecdotes[selected]}
       </div>
-      <div>
-        <p>Has {votes[selected]} votes</p>
-      </div>
+      <p>Has {votes[selected]} votes</p>
       <Button text='vote' set={updateVotes} />
       <Button text='next anecdote' set={() => setSelected(Math.floor(Math.random() * 6))} />
+      <h1>Anecdote with the most votes</h1>
+        {props.anecdotes[popular]}
+      <p>Has {votes[popular]} votes</p>
     </div>
   )
 }
