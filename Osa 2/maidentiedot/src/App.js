@@ -37,7 +37,6 @@ const App = () => {
 
   return (
     <div>
-      {console.log('re-rendering')}
       <form>
         find countries <input value={newSearch} onChange={handleChange} />
       </form>

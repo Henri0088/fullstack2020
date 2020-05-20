@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import ShowInfo from './showInfo'
+import Weather from './Weather'
 
 const CountryInfo = ({data, setSearch}) => {
     if (data.length > 10) {
@@ -18,6 +19,7 @@ const CountryInfo = ({data, setSearch}) => {
         return (
             <div> 
                 <ShowInfo country={data[0]} />
+                <Weather city={data[0].capital} />
             </div>
         )
     }
