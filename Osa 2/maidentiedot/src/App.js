@@ -27,12 +27,21 @@ const App = () => {
     setShownData(newData)
   }
 
+  const changeSearch = (value) => {
+    setNewSearch(value)
+    const newData = countryData.filter(country =>
+      country.name.toUpperCase().includes(value.toUpperCase())
+    )
+    setShownData(newData)
+  }
+
   return (
     <div>
+      {console.log('re-rendering')}
       <form>
         find countries <input value={newSearch} onChange={handleChange} />
       </form>
-      <CountryInfo data={shownData} />
+      <CountryInfo data={shownData} setSearch={changeSearch} />
     </div>
   )
 }

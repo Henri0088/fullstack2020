@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
+import ShowInfo from './showInfo'
 
-const countryInfo = ({data}) => {
+const CountryInfo = ({data, setSearch}) => {
     if (data.length > 10) {
         return (
             <p>Too many matches, specify another filter</p>
@@ -9,27 +10,17 @@ const countryInfo = ({data}) => {
         return (
             <div>
                 {data.map(country => 
-                    <p key={country.numericCode}>{country.name}</p>
+                    <p key={country.numericCode}>{country.name} <button onClick={() => setSearch(country.name)}>show</button></p>
                 )}
             </div>
         )
     } else {
         return (
-            <div>
-                <h1>{data[0].name}</h1>
-                Capital: {data[0].capital} <br/>
-                Population: {data[0].population}
-                <h2>Languages</h2>
-                {console.log(data)}
-                <ul>
-                    {data[0].languages.map(lang =>
-                        <li key={lang.iso639_1}>{lang.name}</li>
-                    )}
-                </ul>
-                <img src={data[0].flag} width='200'/>
+            <div> 
+                <ShowInfo country={data[0]} />
             </div>
         )
     }
 }
 
-export default countryInfo
+export default CountryInfo
