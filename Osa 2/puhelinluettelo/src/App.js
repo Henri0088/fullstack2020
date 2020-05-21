@@ -53,10 +53,17 @@ const App = () => {
         setShownPersons(newPersons.filter(person => 
           person.name.toUpperCase().includes(newSearch.toUpperCase())))
       })
-      .catch(error => console.log(error))
     }
     setNewNumber('')
     setNewName('')
+  }
+
+  const handleRemove = (user) => {
+    if (window.confirm(`Delete ${user.name} ?`)) {
+      personService.remove(user.id)
+    }
+    const newContacts = persons.filter(person => person.id !== user.id)
+    updateAllPStates(newContacts)
   }
 
   return (
@@ -70,7 +77,7 @@ const App = () => {
         handleClick={handleClick}
       />
       <h2>Numbers</h2>
-      <ContactList persons={shownPersons} />
+      <ContactList persons={shownPersons} remove={handleRemove} />
     </div>
   )
 
