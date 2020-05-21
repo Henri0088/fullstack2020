@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import axios from 'axios'
 import ContactList from './components/ContactList'
 import NewNumberForm from './components/newNumberForm'
+import personService from './services/persons'
 
 const App = () => {
   const [ persons, setPersons] = useState([]) 
@@ -11,13 +11,15 @@ const App = () => {
   const [ newSearch, setNewSearch ] = useState('')
 
   useEffect(() => {
-    axios
-    .get('http://localhost:3001/persons')
-    .then(response => {
-      setPersons(response.data)
-      setShownPersons(response.data)
-    })
+    personService
+    .getAll()
+    .then(response => updateAllPStates(response))
   }, [])
+
+  const updateAllPStates = data => {
+    setPersons(data)
+    setShownPersons(data)
+  }
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -43,12 +45,15 @@ const App = () => {
         name: newName,
         number: newNumber
       }
-      const newPersons = persons.concat(newContact)
-      
-      console.log(newContact.name.toUpperCase())
-      setPersons(newPersons)
-      setShownPersons(newPersons.filter(person => 
-        person.name.toUpperCase().includes(newSearch.toUpperCase())))
+      personService
+      .create(newContact)
+      .then(response => {
+        const newPersons = persons.concat(newContact)
+        setPersons(newPersons)
+        setShownPersons(newPersons.filter(person => 
+          person.name.toUpperCase().includes(newSearch.toUpperCase())))
+      })
+      .catch(error => console.log(error))
     }
     setNewNumber('')
     setNewName('')
