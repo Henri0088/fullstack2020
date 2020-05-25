@@ -11,13 +11,14 @@ const create = newPerson => {
     return promise.then(response => response.data)
 }
 
-const update = (id, newPerson) => {
-    const promise = axios.post(`${baseUrl}/${id}`, newPerson)
+const update = (newPerson) => {
+    const promise = axios.put(`${baseUrl}/${newPerson.id}`, newPerson)
     return promise.then(response => response.data)
 }
 
 const remove = (id) => {
     axios.delete(`${baseUrl}/${id}`)
+    .catch(error => console.log(error))
 }
 
 export default {

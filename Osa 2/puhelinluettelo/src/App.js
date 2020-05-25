@@ -39,7 +39,29 @@ const App = () => {
     event.preventDefault()
 
     if (persons.some(person => person.name === newName)) {
-      window.alert(`${newName} is already added to the phonebook`)
+      const alert = window.confirm(`${newName} is already added to the phonebook, do you want to replace the old number?`)
+      if (alert) {
+        const iD = persons.find(p => p.name === newName).id
+        console.log(iD)
+        const newContact = {
+          name: newName,
+          number: newNumber,
+          id: iD
+        }
+        personService
+        .update(newContact)
+        .then(response => {
+          const newPersons = persons.map(p => 
+            p.name === newContact.name
+            ? {...newContact}
+            : p
+          )
+          console.log(newPersons)
+          setPersons(newPersons)
+          setShownPersons(newPersons.filter(person =>
+            person.name.toUpperCase().includes(newSearch.toUpperCase())))
+        })
+      }
     } else {
       const newContact = {
         name: newName,
@@ -48,7 +70,8 @@ const App = () => {
       personService
       .create(newContact)
       .then(response => {
-        const newPersons = persons.concat(newContact)
+        const newPersons = persons.concat(response)
+        console.log(response)
         setPersons(newPersons)
         setShownPersons(newPersons.filter(person => 
           person.name.toUpperCase().includes(newSearch.toUpperCase())))

@@ -1,24 +1,3 @@
 {
-  "persons": [
-    {
-      "name": "Peter",
-      "number": "0557312312",
-      "id": 1
-    },
-    {
-      "name": "Heikki",
-      "number": "0402134234",
-      "id": 2
-    },
-    {
-      "name": "Hannes",
-      "number": "044312356",
-      "id": 3
-    },
-    {
-      "name": "Dimitri",
-      "number": "0453123134",
-      "id": 4
-    }
-  ]
+  "persons": []
 }

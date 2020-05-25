@@ -1,8 +1,14 @@
 import React from 'react';
 
-const Contact = ({person}) => {
+const Contact = ({person, remove}) => {
     return (
-        <p>{person.name} {person.number}</p>
+        <div>
+            <p>{person.name} {person.number} 
+                <button onClick={() => remove(person)}>
+                    remove
+                </button>
+            </p>
+        </div>
     )
 }
 
