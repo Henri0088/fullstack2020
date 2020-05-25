@@ -3,6 +3,7 @@ import ContactList from './components/ContactList'
 import NewNumberForm from './components/newNumberForm'
 import personService from './services/persons'
 import Notification from './components/Notification'
+import ErrorMsg from './components/Error'
 
 const App = () => {
   const [ persons, setPersons] = useState([]) 
@@ -11,6 +12,7 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('')
   const [ newSearch, setNewSearch ] = useState('')
   const [ newNoti, setNewNoti] = useState('')
+  const [ newError, setNewError] = useState('')
 
   useEffect(() => {
     personService
@@ -39,7 +41,7 @@ const App = () => {
 
   const handleClick = (event) => {
     event.preventDefault()
-
+    
     if (persons.some(person => person.name === newName)) {
       const alert = window.confirm(`${newName} is already added to the phonebook, do you want to replace the old number?`)
       if (alert) {
@@ -60,8 +62,11 @@ const App = () => {
           setPersons(newPersons)
           setShownPersons(newPersons.filter(person =>
             person.name.toUpperCase().includes(newSearch.toUpperCase())))
+            showNotification(`Updated ${newContact.name}`)
         })
-        showNotification(`Updated ${newContact.name}`)
+        .catch(() => {
+          showError(`Information of ${newContact.name} has already been removed from the server, please refresh.`)
+        })
       }
     } else {
       const newContact = {
@@ -85,10 +90,10 @@ const App = () => {
   const handleRemove = user => {
     if (window.confirm(`Delete ${user.name} ?`)) {
       personService.remove(user.id)
+      const newContacts = persons.filter(person => person.id !== user.id)
+      updateAllPStates(newContacts)
+      showNotification(`Removed ${user.name}`)
     }
-    const newContacts = persons.filter(person => person.id !== user.id)
-    updateAllPStates(newContacts)
-    showNotification(`Removed ${user.name}`)
   }
 
   const showNotification = message => {
@@ -98,10 +103,18 @@ const App = () => {
     }, 3000)
   }
 
+  const showError = message => {
+    setNewError(message)
+    setTimeout(() => {
+      setNewError('')
+    }, 7000)
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={newNoti} />
+      <Notification message={newNoti}/>
+      <ErrorMsg message={newError}/>
       search: <input value={newSearch} onChange={handleSearchChange} />
       <h2>Add new number</h2>
       <NewNumberForm 
