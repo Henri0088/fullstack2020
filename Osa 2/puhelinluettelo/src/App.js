@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import ContactList from './components/ContactList'
 import NewNumberForm from './components/newNumberForm'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [ persons, setPersons] = useState([]) 
@@ -9,6 +10,7 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newSearch, setNewSearch ] = useState('')
+  const [ newNoti, setNewNoti] = useState('')
 
   useEffect(() => {
     personService
@@ -42,7 +44,6 @@ const App = () => {
       const alert = window.confirm(`${newName} is already added to the phonebook, do you want to replace the old number?`)
       if (alert) {
         const iD = persons.find(p => p.name === newName).id
-        console.log(iD)
         const newContact = {
           name: newName,
           number: newNumber,
@@ -56,11 +57,11 @@ const App = () => {
             ? {...newContact}
             : p
           )
-          console.log(newPersons)
           setPersons(newPersons)
           setShownPersons(newPersons.filter(person =>
             person.name.toUpperCase().includes(newSearch.toUpperCase())))
         })
+        showNotification(`Updated ${newContact.name}`)
       }
     } else {
       const newContact = {
@@ -71,27 +72,36 @@ const App = () => {
       .create(newContact)
       .then(response => {
         const newPersons = persons.concat(response)
-        console.log(response)
         setPersons(newPersons)
         setShownPersons(newPersons.filter(person => 
           person.name.toUpperCase().includes(newSearch.toUpperCase())))
       })
+      showNotification(`Added ${newContact.name}`)
     }
     setNewNumber('')
     setNewName('')
   }
 
-  const handleRemove = (user) => {
+  const handleRemove = user => {
     if (window.confirm(`Delete ${user.name} ?`)) {
       personService.remove(user.id)
     }
     const newContacts = persons.filter(person => person.id !== user.id)
     updateAllPStates(newContacts)
+    showNotification(`Removed ${user.name}`)
+  }
+
+  const showNotification = message => {
+    setNewNoti(message)
+    setTimeout(() => {
+      setNewNoti('')
+    }, 3000)
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={newNoti} />
       search: <input value={newSearch} onChange={handleSearchChange} />
       <h2>Add new number</h2>
       <NewNumberForm 
