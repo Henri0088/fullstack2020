@@ -76,9 +76,8 @@ const App = () => {
       personService
       .create(newContact)
       .then(response => {
-        const newPersons = persons.concat(response)
-        setPersons(newPersons)
-        setShownPersons(newPersons.filter(person => 
+        setPersons(response)
+        setShownPersons(response.filter(person => 
           person.name.toUpperCase().includes(newSearch.toUpperCase())))
       })
       showNotification(`Added ${newContact.name}`)
