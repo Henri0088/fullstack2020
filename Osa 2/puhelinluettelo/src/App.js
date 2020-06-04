@@ -79,8 +79,12 @@ const App = () => {
         setPersons(response)
         setShownPersons(response.filter(person => 
           person.name.toUpperCase().includes(newSearch.toUpperCase())))
+          showNotification(`Added ${newContact.name}`)
       })
-      showNotification(`Added ${newContact.name}`)
+      .catch(error => {
+        showError(error.response.data.error)
+        console.log(error.response)
+      })
     }
     setNewNumber('')
     setNewName('')
