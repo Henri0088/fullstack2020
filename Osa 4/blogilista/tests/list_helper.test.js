@@ -20,12 +20,24 @@ const blogList = [
 	{
 		_id: '5a422aa71b54a676234d17f8',
 		title: 'Test blog3',
-		author: 'Test person3',
+		author: 'Test person2',
 		url: 'example.com/yeet3',
 		likes: 2,
 		__v: 0
 	}
 ]
+
+test('Finds author with most blogs and the amount of blogs', () => {
+	result = listHelper.mostBlogs(blogList)
+	expect(result.author).toBe('Test person2')
+	expect(result.blogs).toBe(2)
+})
+
+test('Finds author with most likes and the count of likes', () => {
+	result = listHelper.mostLikes(blogList)
+	expect(result.author).toBe('Test person2')
+	expect(result.likes).toBe(9)
+})
 
 test('dummy returns one', () => {
 	const blogs = []
