@@ -59,6 +59,29 @@ test('Can post a blog succesfully', async () => {
 	expect(titles).toContain('How to post')
 })
 
+test('If no value for field \'likes\' then 0', async () => {
+	newBlog = {
+		title: "How to post",
+		author: "op",
+		url: "this.com"
+	}
+	await api.post('/api/blogs').send(newBlog)
+
+	blogs = await api.get('/api/blogs')
+	returnedNewBlog = blogs.body.find(blog => blog.title === 'How to post')
+
+	expect(returnedNewBlog.likes).toBeDefined()
+	expect(returnedNewBlog.likes).toBe(0)
+})
+
+test('if no values for fields \'title\' or \'url\' return 400', async () => {
+	newBlog = {
+		author: "op",
+		likes: 5
+	}
+	await api.post('/api/blogs').send(newBlog).expect(400)
+})
+
 afterAll(() => {
 	mongoose.connection.close()
 })

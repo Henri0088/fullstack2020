@@ -9,9 +9,20 @@ blogRouter.get('/', async (req, res) => {
 })
 
 blogRouter.post('/', async (req, res) => {
-	const blog = new Blog(req.body)
-	logger.info(`INCOMING POST: ${req.body}`)
+	
+	logger.info(`INCOMING POST:`, req.body)
 
+	if (!("title" in req.body)) {
+		res.status(400).json({ error: 'title missing'})
+		return
+	}
+
+	if (!('url' in req.body)) {
+		res.status(400).json({ error: 'url missing'})
+		return
+	}
+
+	const blog = new Blog(req.body)
 	result = await blog.save()
 	res.status(201).json(result)
 })
