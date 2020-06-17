@@ -5,6 +5,7 @@ const cors = require('cors')
 const blogRouter = require('./controllers/blogs')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
+mongoose.set('useFindAndModify', false)
 
 logger.info(`Connecting to ${config.MONGODB_URI}`)
 

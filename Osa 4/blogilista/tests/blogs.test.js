@@ -31,55 +31,92 @@ beforeEach(async () => {
 	await Blog.insertMany(initialBlogs)
 })
 
-test('Correct number of JSON-blogs is returned', async () => {
-	await api.get('/api/blogs')
-	.expect(200).expect('Content-Type', /application\/json/)
-})
-
-test('Returned JSON-blogs have \"id\" field', async () => {
-	blogs = await api.get('/api/blogs')
-	blogs.body.forEach((blog) => {
-		expect(blog.id).toBeDefined()
+describe('GET to /api/blogs', () => {
+	test('Correct number of JSON-blogs is returned', async () => {
+		await api.get('/api/blogs')
+		.expect(200).expect('Content-Type', /application\/json/)
+	})
+	
+	test('Returned JSON-blogs have \"id\" field', async () => {
+		blogs = await api.get('/api/blogs')
+		blogs.body.forEach((blog) => {
+			expect(blog.id).toBeDefined()
+		})
 	})
 })
 
-test('Can post a blog succesfully', async () => {
-	newBlog = {
-		title: "How to post",
-		author: "op",
-		url: "this.com",
-		likes: 3
-	}
-	await api.post('/api/blogs').send(newBlog)
-
-	blogs = await api.get('/api/blogs')
-	expect(blogs.body.length).toBe(initialBlogs.length + 1)
+describe('POST to /api/blogs', () => {
+	test('Can post a blog succesfully', async () => {
+		newBlog = {
+			title: "How to post",
+			author: "op",
+			url: "this.com",
+			likes: 3
+		}
+		await api.post('/api/blogs').send(newBlog)
 	
-	const titles = blogs.body.map(blog => blog.title)
-	expect(titles).toContain('How to post')
+		blogs = await api.get('/api/blogs')
+		expect(blogs.body.length).toBe(initialBlogs.length + 1)
+		
+		const titles = blogs.body.map(blog => blog.title)
+		expect(titles).toContain('How to post')
+	})
+	
+	test('If no value for field \'likes\' then 0', async () => {
+		newBlog = {
+			title: "How to post",
+			author: "op",
+			url: "this.com"
+		}
+		await api.post('/api/blogs').send(newBlog)
+	
+		blogs = await api.get('/api/blogs')
+		returnedNewBlog = blogs.body.find(blog => blog.title === 'How to post')
+	
+		expect(returnedNewBlog.likes).toBeDefined()
+		expect(returnedNewBlog.likes).toBe(0)
+	})
+	
+	test('if no values for fields \'title\' or \'url\' return 400', async () => {
+		newBlog = {
+			author: "op",
+			likes: 5
+		}
+		await api.post('/api/blogs').send(newBlog).expect(400)
+	})
 })
 
-test('If no value for field \'likes\' then 0', async () => {
-	newBlog = {
-		title: "How to post",
-		author: "op",
-		url: "this.com"
-	}
-	await api.post('/api/blogs').send(newBlog)
+describe('DELETE to /api/blogs/:id', () => {
+	test('deleting with a valid id works', async () => {
+		dbContent = await api.get('/api/blogs')
+		idToDelete = dbContent.body[0].id
 
-	blogs = await api.get('/api/blogs')
-	returnedNewBlog = blogs.body.find(blog => blog.title === 'How to post')
+		await api.delete(`/api/blogs/${idToDelete}`)
+		dbContentAfter = await api.get('/api/blogs')
 
-	expect(returnedNewBlog.likes).toBeDefined()
-	expect(returnedNewBlog.likes).toBe(0)
+		expect(dbContentAfter.body.length).toBe(dbContent.body.length - 1)
+	})
 })
 
-test('if no values for fields \'title\' or \'url\' return 400', async () => {
-	newBlog = {
-		author: "op",
-		likes: 5
-	}
-	await api.post('/api/blogs').send(newBlog).expect(400)
+describe('PUT to /api/blogs/:id', () => {
+	test('updating amount of likes works', async () => {
+		dbContent = await api.get('/api/blogs')
+		idToModify = dbContent.body[0].id
+
+		newLikes = {
+			title: "Cooking",
+			author: "Cook",
+			url: "genericCookMan.com",
+			likes: 14
+		}
+
+		await api.put(`/api/blogs/${idToModify}`).send(newLikes)
+		
+		res = await api.get(`/api/blogs/${idToModify}`)
+		console.log(res.body)
+
+		expect(res.body.likes).toBe(14)
+	})
 })
 
 afterAll(() => {
