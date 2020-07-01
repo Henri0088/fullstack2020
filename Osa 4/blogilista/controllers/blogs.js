@@ -1,10 +1,13 @@
 const blogRouter = require('express').Router()
 require('express-async-errors')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const logger = require('../utils/logger')
 
 blogRouter.get('/', async (req, res) => {
-	const blogs = await Blog.find({})
+	const blogs = await Blog.find({}).populate('user', {
+		username: 1, name: 1, id: 1
+	})
 	res.json(blogs)
 })
 
@@ -16,9 +19,9 @@ blogRouter.get('/:id', async (req, res) => {
 
 blogRouter.post('/', async (req, res) => {
 	
-	logger.info(`INCOMING POST:`, req.body)
+	logger.info('INCOMING POST (blogs):', req.body)
 
-	if (!("title" in req.body)) {
+	if (!('title' in req.body)) {
 		res.status(400).json({ error: 'title missing'})
 		return
 	}
@@ -28,8 +31,23 @@ blogRouter.post('/', async (req, res) => {
 		return
 	}
 
-	const blog = new Blog(req.body)
+	const user = await User.findOne({})
+	const body = req.body
+
+	newBlog = {
+		title: body.title,
+		author: body.author,
+		url: body.url,
+		likes: body.likes,
+		user: user._id
+	}
+
+	const blog = new Blog(newBlog)
 	result = await blog.save()
+
+	user.blogs = user.blogs.concat(blog._id)
+	await user.save()
+
 	res.status(201).json(result)
 })
 

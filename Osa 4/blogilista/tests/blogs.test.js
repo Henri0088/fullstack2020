@@ -113,7 +113,6 @@ describe('PUT to /api/blogs/:id', () => {
 		await api.put(`/api/blogs/${idToModify}`).send(newLikes)
 		
 		res = await api.get(`/api/blogs/${idToModify}`)
-		console.log(res.body)
 
 		expect(res.body.likes).toBe(14)
 	})
