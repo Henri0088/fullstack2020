@@ -3,6 +3,7 @@ require('express-async-errors')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const logger = require('../utils/logger')
+const jwt = require('jsonwebtoken')
 
 blogRouter.get('/', async (req, res) => {
 	const blogs = await Blog.find({}).populate('user', {
@@ -18,9 +19,8 @@ blogRouter.get('/:id', async (req, res) => {
 })
 
 blogRouter.post('/', async (req, res) => {
-	
-	logger.info('INCOMING POST (blogs):', req.body)
 
+	logger.info('INCOMING POST (blogs):', req.body)
 	if (!('title' in req.body)) {
 		res.status(400).json({ error: 'title missing'})
 		return
@@ -31,8 +31,17 @@ blogRouter.post('/', async (req, res) => {
 		return
 	}
 
-	const user = await User.findOne({})
 	const body = req.body
+	if (!req.token) {
+		return res.status(401).json({error: 'token missing'})
+	}
+
+	const decodedToken = jwt.verify(req.token, process.env.SECRET)
+	if (!decodedToken.id) {
+		return res.status(401).json({error: 'invalid'})
+	}
+
+	const user = await User.findById(decodedToken.id)
 
 	newBlog = {
 		title: body.title,
@@ -55,8 +64,22 @@ blogRouter.delete('/:id', async (req, res) => {
 	const id = req.params.id
 	logger.info(`INCOMING DELETE REQ, id: ${id}`)
 
-	result = await Blog.findByIdAndDelete(id)
-	res.status(204).end()
+	if (!req.token) {
+		return res.status(401).json({error: 'token missing'})
+	}
+
+	const decodedToken = jwt.verify(req.token, process.env.SECRET)
+	if (!decodedToken.id) {
+		return res.status(401).json({error: 'invalid token'})
+	}
+	
+	const blog = await Blog.findById(id)
+
+	if (blog.user.toString() === decodedToken.id) {
+		result = await Blog.findByIdAndDelete(id)
+		res.status(204).end()
+	}
+	res.status(401).status({error: 'unathorized'})
 })
 
 blogRouter.put('/:id', async (req, res) => {

@@ -1,9 +1,33 @@
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const supertest = require('supertest')
 const app = require('../app')
 const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken')
 
 const api = supertest(app)
+
+const getToken = async () => {
+	await User.deleteMany({})
+
+	const testUser = {
+		username: "Tatti123",
+		name: "Tatu",
+		password: "1234"
+	}
+
+	const user = new User(testUser)
+	const result = await user.save()
+
+	const tokenUser = {
+		username: "Tatti123",
+		id: result._id
+	}
+
+	const token = jwt.sign(tokenUser, process.env.SECRET)
+	const tokenBearer = 'bearer '.concat(token)
+	return tokenBearer
+}
 
 const initialBlogs = [
 	{
@@ -27,6 +51,7 @@ const initialBlogs = [
 ]
 
 beforeEach(async () => {
+	// Refresh test blogs
 	await Blog.deleteMany({})
 	await Blog.insertMany(initialBlogs)
 })
@@ -46,20 +71,32 @@ describe('GET to /api/blogs', () => {
 })
 
 describe('POST to /api/blogs', () => {
-	test('Can post a blog succesfully', async () => {
+	test('Can post a blog succesfully with valid token', async () => {
 		newBlog = {
 			title: "How to post",
 			author: "op",
 			url: "this.com",
 			likes: 3
 		}
-		await api.post('/api/blogs').send(newBlog)
+		const token = await getToken()
+
+		await api.post('/api/blogs').send(newBlog).set({'Authorization': token})
 	
 		blogs = await api.get('/api/blogs')
 		expect(blogs.body.length).toBe(initialBlogs.length + 1)
 		
 		const titles = blogs.body.map(blog => blog.title)
 		expect(titles).toContain('How to post')
+	})
+
+	test('Cannot post if no token is provided', async () => {
+		newBlog = {
+			title: "How to post",
+			author: "op",
+			url: "this.com",
+			likes: 3
+		}
+		await api.post('/api/blogs').send(newBlog).expect(401)
 	})
 	
 	test('If no value for field \'likes\' then 0', async () => {
@@ -68,7 +105,9 @@ describe('POST to /api/blogs', () => {
 			author: "op",
 			url: "this.com"
 		}
-		await api.post('/api/blogs').send(newBlog)
+		const token = await getToken()
+
+		await api.post('/api/blogs').send(newBlog).set({'Authorization': token})
 	
 		blogs = await api.get('/api/blogs')
 		returnedNewBlog = blogs.body.find(blog => blog.title === 'How to post')
@@ -87,14 +126,20 @@ describe('POST to /api/blogs', () => {
 })
 
 describe('DELETE to /api/blogs/:id', () => {
-	test('deleting with a valid id works', async () => {
-		dbContent = await api.get('/api/blogs')
-		idToDelete = dbContent.body[0].id
+	test('deleting with a valid id works if token is correct', async () => {
+		const token = await getToken()
 
-		await api.delete(`/api/blogs/${idToDelete}`)
-		dbContentAfter = await api.get('/api/blogs')
+		newBlog = {
+			title: "How to post",
+			author: "op",
+			url: "this.com",
+			likes: 3
+		}
 
-		expect(dbContentAfter.body.length).toBe(dbContent.body.length - 1)
+		result = await api.post('/api/blogs').send(newBlog).set({'Authorization': token})
+		blogId = result.body.id
+
+		await api.delete(`/api/blogs/${blogId}`).set({'Authorization': token}).expect(204)
 	})
 })
 
