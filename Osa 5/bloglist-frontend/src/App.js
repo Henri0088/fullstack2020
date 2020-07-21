@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import BlogRender from './components/BlogRender'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
@@ -8,6 +8,7 @@ import newBlog from './services/newBlog'
 import Logout from './components/Logout'
 import Notification from './components/Notification'
 import Error from './components/Error'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -16,17 +17,17 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
-
   const [notiMsg, setNewNoti] = useState('')
   const [errorMsg, setNewErr] = useState('')
   
+  const blogFormRef = useRef()
+
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )  
+    const fetchBlogs = async () => {
+      const fetchedBlogs = await blogService.getAll()
+      setBlogs(fetchedBlogs)
+    }    
+    fetchBlogs()
   }, [])
 
   useEffect(() => {
@@ -49,28 +50,24 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      blogService.getAll().then(blogs =>
-        setBlogs(blogs)
-      )
+      setBlogs(await blogService.getAll())
     } catch (exception) {
       console.log('Login failed')
       showError('Wrong username or password')
     }
   }
 
-  const handleNewBlog = async (event) => {
-    event.preventDefault()
+  const handleNewBlog = async ({title, author, url}) => {
     try {
       const res = await newBlog({user, title, author, url})
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+      
       blogService.getAll().then(blogs =>
         setBlogs(blogs)
       )
+      blogFormRef.current.toggleVisible()
       showNotification(`A new blog \'${title}\' by ${author} added`)
     } catch (exception) {
-      console.log('Couldn\'t create a new blog', exception)
+      console.log('Couldn\'t create a new blog')
       showError('A new blog couldn\'t be added')
     }
   }
@@ -109,9 +106,9 @@ const App = () => {
         </div>
         <div>
           <br/>
-          <NewBlogForm title={title} setTitle={setTitle}
-          author={author} setAuthor={setAuthor}
-          url={url} setUrl={setUrl} handleNewBlog={handleNewBlog}/>
+          <Togglable buttonLabel={'New blog'} ref={blogFormRef}>
+            <NewBlogForm handleNewBlog={handleNewBlog}/>
+          </Togglable>
         </div>
         <div>
           <br/>
