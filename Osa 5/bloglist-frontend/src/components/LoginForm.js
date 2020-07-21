@@ -1,16 +1,16 @@
 import React from 'react'
 
-const logIn = ({username, setUsername, password, setPassword, handleLogin}) => {
+const logInForm = ({username, setUsername, password, setPassword, handleLogin}) => {
 
     return (
         <div>
             <div>
-                <h1>log in</h1>
+                <h1>Log In</h1>
             </div>
             
             <form onSubmit={handleLogin}>
                 <div>
-                    username
+                    username: 
                     <input
                     type='text'
                     value={username}
@@ -19,7 +19,7 @@ const logIn = ({username, setUsername, password, setPassword, handleLogin}) => {
                     />
                 </div>
                 <div>
-                    password
+                    password:
                     <input
                     type='password'
                     value={password}
@@ -33,4 +33,4 @@ const logIn = ({username, setUsername, password, setPassword, handleLogin}) => {
     )
 }
 
-export default logIn
+export default logInForm
