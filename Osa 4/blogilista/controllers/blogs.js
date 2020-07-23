@@ -63,7 +63,7 @@ blogRouter.post('/', async (req, res) => {
 blogRouter.delete('/:id', async (req, res) => {
 	const id = req.params.id
 	logger.info(`INCOMING DELETE REQ, id: ${id}`)
-
+	console.log(req.token)
 	if (!req.token) {
 		return res.status(401).json({error: 'token missing'})
 	}
@@ -86,10 +86,9 @@ blogRouter.put('/:id', async (req, res) => {
 	const id = req.params.id
 	logger.info(`INCOMING PUT REQ, id: ${id}`)
 	newBlog = req.body
-
-	result = await Blog.findByIdAndUpdate(id, newBlog)
 	
-	res.status(200).end()
+	result = await Blog.findByIdAndUpdate(id, newBlog)
+	res.status(200).json(result)
 })
 
 module.exports = blogRouter
