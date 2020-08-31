@@ -71,7 +71,7 @@ blogRouter.delete('/:id', async (req, res) => {
 	if (!decodedToken.id) {
 		return res.status(401).json({error: 'invalid token'})
 	}
-	
+
 	const blog = await Blog.findById(id)
 
 	if (blog.user.toString() === decodedToken.id) {
@@ -85,7 +85,7 @@ blogRouter.put('/:id', async (req, res) => {
 	const id = req.params.id
 	logger.info(`INCOMING PUT REQ, id: ${id}`)
 	newBlog = req.body
-	
+
 	result = await Blog.findByIdAndUpdate(id, newBlog)
 	res.status(200).json(result)
 })
