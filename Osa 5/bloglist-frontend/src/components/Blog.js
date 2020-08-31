@@ -39,7 +39,7 @@ const Blog = ({ blog, handleNewLike, user, handleRemove }) => {
                 {`${blog.title} | ${blog.author} | `}
                 <button onClick={toggleVisible}>hide</button> <br />
                 {blog.url} <br />
-                {`${blog.likes} | `}
+                <span className='likeAmount'>{`${blog.likes} | `}</span>
                 <button onClick={addLike}>like</button> <br />
                 <button style={showRemove} onClick={removeBlog}>Remove</button>
             </div>

@@ -10,7 +10,7 @@ const BlogRender = ({ blogs, handleNewLike, user, handleRemove }) => {
     )
 
     return (
-        <div>
+        <div id='blogList'>
             {formattedBlogs}
         </div>
     )

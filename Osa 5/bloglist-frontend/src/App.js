@@ -113,7 +113,7 @@ const App = () => {
 
     if (user === null) {
         return (
-            <div>
+            <div id='frontpageLogIn'>
                 <Error message={errorMsg} />
                 <LoginForm username={username} setUsername={setUsername}
                     password={password} setPassword={setPassword}
