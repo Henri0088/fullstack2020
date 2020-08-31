@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const removeBlog = async ({id, user}) => {
+const removeBlog = async ({ id, user }) => {
     const config = {
         headers: { Authorization: `bearer ${user.token}` }
     }

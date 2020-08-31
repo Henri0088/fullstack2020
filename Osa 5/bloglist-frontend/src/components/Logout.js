@@ -10,7 +10,7 @@ const Logout = ({ user, setUser }) => {
     return (
         <div>
             {`${user.username} logged in `}
-            <button onClick={() => setUserToNull({setUser})}>Log out</button>
+            <button onClick={() => setUserToNull({ setUser })}>Log out</button>
         </div>
     )
 }

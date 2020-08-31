@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ErrorMsg = ({message}) => {
+const ErrorMsg = ({ message }) => {
     if (message === '') {
         return null
     }

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const newLike = async ({blog}) => {
+const newLike = async ({ blog }) => {
     const likedBlog = {
         user: blog.user.id,
         likes: blog.likes + 1,

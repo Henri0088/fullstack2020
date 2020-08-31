@@ -1,7 +1,7 @@
 import axios from 'axios'
 const baseUrl = '/api/blogs'
 
-const newBlog = async ({user, title, author, url}) => {
+const newBlog = async ({ user, title, author, url }) => {
 
     if (title === '' || url === '' || author === '') {
         throw new Error('Some fields are empty')
@@ -14,7 +14,7 @@ const newBlog = async ({user, title, author, url}) => {
     }
 
     const config = {
-        headers: { Authorization: `bearer ${user.token}`}
+        headers: { Authorization: `bearer ${user.token}` }
     }
 
     const response = await axios.post(baseUrl, info, config)
