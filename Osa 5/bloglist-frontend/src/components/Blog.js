@@ -31,11 +31,11 @@ const Blog = ({ blog, handleNewLike, user, handleRemove }) => {
 
     return (
         <div>
-            <div style={hideWhenVisible}>
+            <div style={hideWhenVisible} className='minimalInfo'>
                 {`${blog.title} | ${blog.author} | `}
                 <button onClick={toggleVisible}>view</button>
             </div>
-            <div style={blogStyleVisible}>
+            <div style={blogStyleVisible} className='allInfo'>
                 {`${blog.title} | ${blog.author} | `}
                 <button onClick={toggleVisible}>hide</button> <br />
                 {blog.url} <br />
@@ -51,7 +51,7 @@ Blog.propTypes = {
     handleNewLike: PropTypes.func.isRequired,
     handleRemove: PropTypes.func.isRequired,
     blog: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequires
+    user: PropTypes.object.isRequired
 }
 
 export default Blog
