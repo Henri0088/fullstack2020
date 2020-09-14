@@ -135,7 +135,7 @@ const App = () => {
                         <NewBlogForm handleNewBlog={handleNewBlog} />
                     </Togglable>
                 </div>
-                <div>
+                <div id='blogList'>
                     <br />
                     <BlogRender blogs={blogs} handleNewLike={handleNewLike} user={user} handleRemove={handleRemove} />
                 </div>

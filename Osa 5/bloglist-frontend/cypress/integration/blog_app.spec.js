@@ -75,6 +75,61 @@ describe('Blog app', function() {
 
             cy.get('.allInfo').contains('Humble Pi').get('.likeAmount').contains('1')
         })
+
+        it('Can delete the blog', function() {
+            const blog = {
+                'title':'Humble Pi',
+                'author':'Matt Parker',
+                'url':'standupmaths.com',
+            }
+            const token = JSON.parse(localStorage.getItem('loggedBlogappUser')).token
+            cy.request({'method':'POST', 'url':'http://localhost:3001/api/blogs', 'body':blog, 'auth':{'bearer': token}})
+            cy.visit('http://localhost:3000')
+
+            cy.get('.minimalInfo').contains('Humble Pi').contains('view').click()
+            cy.get('.allInfo').contains('Humble Pi').contains('Remove').click()
+            cy.contains('Humble Pi').should('not.exist')
+        })
+
+        it('Blogs are ordered according to likes', function() {
+            const blog1 = {
+                'title':'Thinking fast and slow',
+                'author':'Daniel Kahneman',
+                'url':'testest.com'
+            }
+            const blog2 = {
+                'title':'Never enough',
+                'author':'Judith Grisel',
+                'url':'grisel.com'
+            }
+            const blog3 = {
+                'title':'Testblog',
+                'author':'mantest',
+                'url':'url.com'
+            }
+            const token = JSON.parse(localStorage.getItem('loggedBlogappUser')).token
+            cy.request({'method':'POST', 'url':'http://localhost:3001/api/blogs', 'body':blog1, 'auth':{'bearer': token}})
+            cy.request({'method':'POST', 'url':'http://localhost:3001/api/blogs', 'body':blog2, 'auth':{'bearer': token}})
+            cy.request({'method':'POST', 'url':'http://localhost:3001/api/blogs', 'body':blog3, 'auth':{'bearer': token}})
+            cy.visit('http://localhost:3000')
+
+            cy.get('.minimalInfo').contains('Daniel').contains('view').click()
+            cy.get('.minimalInfo').contains('Judith').contains('view').click()
+            cy.get('.minimalInfo').contains('mantest').contains('view').click()
+
+            cy.get('.allInfo').contains('Daniel').contains('like').click()
+            cy.get('.allInfo').contains('Judith').contains('like').click().click().click()
+            cy.get('.allInfo').contains('mantest').contains('like').click().click()
+
+            cy.visit('http://localhost:3000')
+            cy.get('.minimalInfo').contains('Daniel').contains('view').click()
+            cy.get('.minimalInfo').contains('Judith').contains('view').click()
+            cy.get('.minimalInfo').contains('mantest').contains('view').click()
+
+            cy.get(':nth-child(1) > :nth-child(1) > .allInfo').contains('Judith Grisel')
+            cy.get(':nth-child(2) > :nth-child(1) > .allInfo').contains('mantest')
+            cy.get(':nth-child(3) > :nth-child(1) > .allInfo').contains('Daniel Kahneman')
+        })
     })
 
 })
