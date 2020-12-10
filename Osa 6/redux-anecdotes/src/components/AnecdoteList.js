@@ -1,10 +1,9 @@
-import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { newVote } from '../reducers/anecdoteReducer'
 import { setNotification } from '../reducers/notificationReducer'
 
-const AnecdoteList = (props) => {
+const AnecdoteList = () => {
     const dispatch = useDispatch()
     const filter = useSelector(state => state.filter)
     let anecdotes = useSelector(state => state.anecdotes)
@@ -16,8 +15,7 @@ const AnecdoteList = (props) => {
     const vote = (id) => {
         console.log('vote', id)
         const anecdote = anecdotes.filter(n => n.id === id).map(n => n.content)
-        const noti = `You voted ${anecdote}`
-        dispatch(setNotification(noti))
+        dispatch(setNotification(`You voted ${anecdote}`, 5))
         dispatch(newVote(id))
     }
 

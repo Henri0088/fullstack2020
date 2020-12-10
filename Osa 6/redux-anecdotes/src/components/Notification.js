@@ -11,8 +11,6 @@ const Notification = () => {
     borderWidth: 1
   }
 
-  setTimeout(() => dispatch(delNotification()), 5000)
-
   if (notification !== '') {
     return (
       <div style={style}>
