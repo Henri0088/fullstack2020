@@ -1,9 +1,14 @@
 import React from 'react'
+import {
+    Switch, Route, Link,
+    BrowserRouter as Router
+} from 'react-router-dom'
 
 const usersList = ({ users }) => {
     const formattedUsers = users.map(user => 
         <div key={user.id}>
-            <p>{`${user.username} ${user.blogs.length}`}</p>
+            <Link to={`/users/${user.id}`}>{`${user.username}`}</Link>
+            {` ${user.blogs.length}`}
         </div>
     )
 

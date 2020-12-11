@@ -11,11 +11,12 @@ import removeBlog from './services/removeBlog'
 import Logout from './components/Logout'
 import Notification from './components/Notification'
 import Error from './components/Error'
+import User from './components/User'
 import Togglable from './components/Togglable'
 import UsersList from './components/UsersList'
 import {
     Switch, Route, Link,
-    BrowserRouter as Router
+    useRouteMatch
 } from 'react-router-dom'
 
 const App = () => {
@@ -126,6 +127,11 @@ const App = () => {
         }, 5000)
     }
 
+    const match = useRouteMatch('/users/:id')
+    const userInfo = match
+        ? users.find(user => user.id === match.params.id)
+        : null
+
     if (user === null) {
         return (
             <div id='frontpageLogIn'>
@@ -137,13 +143,16 @@ const App = () => {
         )
     } else {
         return (
-            <Router>
+            <div>
                 <div>
                     <h1>Blogs</h1>
                     <Error message={errorMsg} />
                     <Logout user={user} setUser={setUser} />
                 </div>
                 <Switch>
+                    <Route path='/users/:id'>
+                        <User user={userInfo} />
+                    </Route>
                     <Route path='/users'>
                         <UsersList users={users} />
                     </Route>
@@ -165,7 +174,7 @@ const App = () => {
                         </div>
                     </Route>
                 </Switch>
-            </Router>
+            </div>
         )
     }
 }
