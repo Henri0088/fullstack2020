@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import BlogRender from './components/BlogRender'
 import blogService from './services/blogs'
+import userService from './services/users'
 import LoginForm from './components/LoginForm'
 import NewBlogForm from './components/NewBlogForm'
 import login from './services/login'
@@ -11,9 +12,15 @@ import Logout from './components/Logout'
 import Notification from './components/Notification'
 import Error from './components/Error'
 import Togglable from './components/Togglable'
+import UsersList from './components/UsersList'
+import {
+    Switch, Route, Link,
+    BrowserRouter as Router
+} from 'react-router-dom'
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
+    const [users, setUsers] = useState([])
     const [user, setUser] = useState(null)
 
     const [username, setUsername] = useState('')
@@ -39,6 +46,14 @@ const App = () => {
             const user = JSON.parse(loggedJSON)
             setUser(user)
         }
+    }, [])
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            const fetchedUsers = await userService.getAll()
+            setUsers(fetchedUsers)
+        }
+        fetchUsers()
     }, [])
 
     const handleLogin = async (event) => {
@@ -122,24 +137,35 @@ const App = () => {
         )
     } else {
         return (
-            <div>
+            <Router>
                 <div>
                     <h1>Blogs</h1>
-                    <Notification message={notiMsg} />
                     <Error message={errorMsg} />
                     <Logout user={user} setUser={setUser} />
                 </div>
-                <div>
-                    <br />
-                    <Togglable buttonLabel={'New blog'} ref={blogFormRef}>
-                        <NewBlogForm handleNewBlog={handleNewBlog} />
-                    </Togglable>
-                </div>
-                <div id='blogList'>
-                    <br />
-                    <BlogRender blogs={blogs} handleNewLike={handleNewLike} user={user} handleRemove={handleRemove} />
-                </div>
-            </div>
+                <Switch>
+                    <Route path='/users'>
+                        <UsersList users={users} />
+                    </Route>
+                    <Route path='/'>
+                        <div>
+                            <div>
+                                <Notification message={notiMsg} />
+                            </div>
+                            <div>
+                                <br />
+                                <Togglable buttonLabel={'New blog'} ref={blogFormRef}>
+                                    <NewBlogForm handleNewBlog={handleNewBlog} />
+                                </Togglable>
+                            </div>
+                            <div id='blogList'>
+                                <br />
+                                <BlogRender blogs={blogs} handleNewLike={handleNewLike} user={user} handleRemove={handleRemove} />
+                            </div>
+                        </div>
+                    </Route>
+                </Switch>
+            </Router>
         )
     }
 }
