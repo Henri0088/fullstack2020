@@ -14,6 +14,7 @@ import Error from './components/Error'
 import User from './components/User'
 import Togglable from './components/Togglable'
 import UsersList from './components/UsersList'
+import Navigation from './components/Navigation'
 import {
     Switch, Route, Link,
     useRouteMatch
@@ -132,6 +133,10 @@ const App = () => {
         ? users.find(user => user.id === match.params.id)
         : null
 
+    const padding = {
+        padding: 5
+    }
+
     if (user === null) {
         return (
             <div id='frontpageLogIn'>
@@ -145,9 +150,11 @@ const App = () => {
         return (
             <div>
                 <div>
+                    <Navigation user={user} setUser={setUser}/>
+                </div>
+                <div>
                     <h1>Blogs</h1>
                     <Error message={errorMsg} />
-                    <Logout user={user} setUser={setUser} />
                 </div>
                 <Switch>
                     <Route path='/users/:id'>
